@@ -40,4 +40,6 @@ router.post('/update/:id', authenticateJWT, listingController.updateListing);
 // @access  Private
 router.post('/:id', authenticateJWT, listingController.deleteListing);
 
+router.post('/contact/:id', authenticateJWT, listingController.contactListing);
+
 module.exports = router;

@@ -99,6 +99,32 @@ const useListing = () => {
       });
   };
 
+  const create_contact = async (id,body) => {
+    setLoading(true);
+    setError(null);
+    console.log({body})
+    fetch(`http://localhost:5000/api/listings/contact/${id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `${token}`
+      },
+      body: JSON.stringify(body),
+    })
+      .then((response) => {
+        response.json();
+      })
+      .then(data => {
+        toast.success("Your contact details is sent to the owner!!!");
+      })
+      .catch((err) => {
+        setError(err.message);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
   const delete_listing = async (id) => {
     setLoading(true);
     setError(null);
@@ -139,7 +165,7 @@ const useListing = () => {
         return response.json();
       })
       .then((response) => {
-        toast.success("Success")
+        toast.success(response.response)
         get_listing_by_id(id,setListing)
 
       })
@@ -159,7 +185,8 @@ const useListing = () => {
     delete_listing,
     get_listing_by_id,
     update_listing,
-    get_listing
+    get_listing,
+    create_contact
   };
 };
 

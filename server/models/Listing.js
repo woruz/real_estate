@@ -31,7 +31,6 @@ const listingSchema = new mongoose.Schema({
         type: String,
         required: true
     }
-    // Add more fields as needed
 });
 
 listingSchema.index({ location: 'text' });

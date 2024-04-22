@@ -8,10 +8,13 @@ import "./Listings.css"
 import useListing from '../../hooks/useListing';
 import useFavourites from '../../hooks/useFavourites';
 import Favourites from './Favourites';
+import ListingOwnerContact from './ListingOwnerContact';
 
 const Listings = () => {
   const [listings, setListings] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isContactModalOpen, setIsContactModalOpen] = useState(false);
+  const [contactId, setContactId] = useState('')
   const [filteredListings, setFilteredListings] = useState([]);
   const [oldTitle, setOldTitle] = useState('')
   const [searchQuery, setSearchQuery] = useState('');
@@ -40,8 +43,17 @@ const Listings = () => {
     setIsModalOpen(true);
   };
 
+  const handlecontactListing = (id) => {
+    setIsContactModalOpen(true);
+    setContactId(id)
+  };
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleCloseContactModal = () => {
+    setIsContactModalOpen(false);
   };
 
   const handleToggleCheckbox = (id) => {
@@ -112,6 +124,13 @@ const Listings = () => {
       >
         <AddListingModal isOpen={isModalOpen} onClose={handleCloseModal} setOldTitle={setOldTitle} />
       </Modal>
+      <Modal
+        isOpen={isContactModalOpen}
+        onRequestClose={handleCloseContactModal}
+        contentLabel="Add New Estate Modal"
+      >
+        <ListingOwnerContact isOpen={isContactModalOpen} onClose={handleCloseContactModal} setOldTitle={setOldTitle} contactId={contactId} />
+      </Modal>
       <div className="list-main-div">
         {listings && listings.length ?  listings.map((listing) => (
           <div key={listing._id} className="listing-card">
@@ -131,7 +150,7 @@ const Listings = () => {
               </div>
             </div>
             <div className="listing-footer">
-              <button className="contact-button">Contact Owner</button>
+              <button className="contact-button" onClick={() => handlecontactListing(listing._id)}>Contact Owner</button>
               <button className="contact-button" onClick={() => handleDeleteListing(listing._id)}>Delete Listing</button>
             </div>
           </div>

@@ -78,14 +78,14 @@ const Favourites = () => {
                 <p>Location: {listing.location}</p>
               </Link>
 
-              <div className="listing-header">
+              {/* <div className="listing-header">
                 <h4>Favourites</h4>
                 <input
                   type="checkbox"
                   checked={true}
                   onChange={() => handleToggleCheckbox(listing._id)}
                 />
-              </div>
+              </div> */}
             </div>
             <div className="listing-footer">
               <button className="contact-button">Contact Owner</button>

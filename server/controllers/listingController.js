@@ -1,4 +1,5 @@
 const Listing = require('../models/Listing');
+const ContactDetails = require('../models/ContactDetails');
 
 // @desc    Get all listings
 // @route   GET /api/listings
@@ -96,8 +97,12 @@ exports.updateListing = async (req, res) => {
     try {
         let listing = await Listing.findById(req.params.id);
 
+        if(listing.owner_id != req.user.id){
+            return res.status(404).json({ success: false, response: 'You are not the owner' });
+        }
+
         if (!listing) {
-            return res.status(404).json({ msg: 'Listing not found' });
+            return res.status(404).json({ success: false, response: 'Listing not found' });
         }
 
         listing = await Listing.findByIdAndUpdate(
@@ -106,10 +111,10 @@ exports.updateListing = async (req, res) => {
             { new: true }
         );
 
-        res.json(listing);
+        res.json({ success: false, response: 'Listing updated' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({success: false, response: 'Server Error'});
     }
 };
 
@@ -127,6 +132,28 @@ exports.deleteListing = async (req, res) => {
         await Listing.findByIdAndUpdate({_id: req.params.id}, {isDeleted: true});
 
         res.json({success: true, message: 'Listing removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({success: false, response: "Server error"});
+    }
+};
+
+
+// @desc    Create a new listing
+// @route   POST /api/listings
+// @access  Private
+exports. contactListing = async (req, res) => {
+    const { email, phone } = req.body;
+
+    try {
+        const newListing = new ContactDetails({
+            email,
+            phone,
+            listing_id: req.params.id,
+        });
+
+        const listing = await newListing.save();
+        res.json({success: true, response: listing});
     } catch (err) {
         console.error(err.message);
         res.status(500).json({success: false, response: "Server error"});
