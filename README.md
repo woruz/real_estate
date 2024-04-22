@@ -16,7 +16,7 @@ Built with:
 - jsonwebtoken
 
 ## Github Link
-- https://github.com/woruz/todo
+- https://github.com/woruz/real_estate
 
 
 ## 🧞 Commands
