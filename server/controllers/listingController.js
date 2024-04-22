@@ -6,25 +6,31 @@ const Listing = require('../models/Listing');
 exports.getListings = async (req, res) => {
     try {
         let query = {};
-
+        console.log({hello: req.query})
         // Apply filters if provided
         if (req.query.location) {
-            query.location = req.query.location;
+            query.location = { $regex: new RegExp(req.query.location, 'i') };
+        }
+        if (req.query.minPrice && !req.query.maxPrice) {
+            query.price = { $gte: req.query.minPrice };
+        }
+        if (!req.query.minPrice && req.query.maxPrice) {
+            query.price = { $lte: req.query.maxPrice };
         }
         if (req.query.minPrice && req.query.maxPrice) {
             query.price = { $gte: req.query.minPrice, $lte: req.query.maxPrice };
         }
         if (req.query.type) {
-            query.type = req.query.type;
+            query.type = { $regex: new RegExp(req.query.type, 'i') };
         }
         // Add more filters as needed
 
         const listings = await Listing.find(query);
 
-        res.json(listings);
+        res.json({success: true, response: listings});
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({success: false, response: "Server error"});
     }
 };
 
@@ -37,20 +43,20 @@ exports.getListingById = async (req, res) => {
         if (!listing) {
             return res.status(404).json({ msg: 'Listing not found' });
         }
-        res.json(listing);
+        res.json({success: true, response: listing});
     } catch (err) {
         console.error(err.message);
         if (err.kind === 'ObjectId') {
-            return res.status(404).json({ msg: 'Listing not found' });
+            return res.status(404).json({success: false, message: 'Listing not found' });
         }
-        res.status(500).send('Server Error');
+        res.status(500).json({success: false, response: "Server error"});
     }
 };
 
 // @desc    Create a new listing
 // @route   POST /api/listings
 // @access  Private
-exports.createListing = async (req, res) => {
+exports. createListing = async (req, res) => {
     const { title, description, price, location, type } = req.body;
 
     try {
@@ -59,14 +65,15 @@ exports.createListing = async (req, res) => {
             description,
             price,
             location,
-            type
+            type,
+            owner_id: req.user.id
         });
 
         const listing = await newListing.save();
-        res.json(listing);
+        res.json({success: true, response: listing});
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({success: false, response: "Server error"});
     }
 };
 
@@ -83,6 +90,8 @@ exports.updateListing = async (req, res) => {
     if (price) listingFields.price = price;
     if (location) listingFields.location = location;
     if (type) listingFields.type = type;
+
+    console.log({listingFields})
 
     try {
         let listing = await Listing.findById(req.params.id);
@@ -115,11 +124,11 @@ exports.deleteListing = async (req, res) => {
             return res.status(404).json({ msg: 'Listing not found' });
         }
 
-        await Listing.findByIdAndRemove(req.params.id);
+        await Listing.findByIdAndUpdate({_id: req.params.id}, {isDeleted: true});
 
-        res.json({ msg: 'Listing removed' });
+        res.json({success: true, message: 'Listing removed' });
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({success: false, response: "Server error"});
     }
 };

@@ -14,7 +14,10 @@ exports.addFavorite = async (req, res) => {
         }
 
         if (user.favorites.includes(req.params.id)) {
-            return res.status(400).json({ msg: 'Listing already in favorites' });
+            const listingIndex = user.favorites.indexOf(req.params.id);
+            user.favorites.splice(listingIndex, 1);
+            await user.save();
+            return res.status(200).json({ success: true, response: 'Listing removed from my favorites' });
         }
 
         user.favorites.push(req.params.id);
@@ -55,12 +58,12 @@ exports.getFavorites = async (req, res) => {
     try {
         const user = await User.findById(req.user.id).populate('favorites');
         if (!user) {
-            return res.status(404).json({ msg: 'User not found' });
+            return res.status(404).json({success: false, response: 'User not found' });
         }
 
-        res.json(user.favorites);
+        res.json({success: true, response: user.favorites});
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(500).json({success: false, response: "Server error"});
     }
 };

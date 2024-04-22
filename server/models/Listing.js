@@ -22,6 +22,14 @@ const listingSchema = new mongoose.Schema({
     type: {
         type: String,
         required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    owner_id: {
+        type: String,
+        required: true
     }
     // Add more fields as needed
 });

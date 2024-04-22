@@ -7,12 +7,12 @@ const listingController = require('../controllers/listingController');
 // @route   GET /api/listings
 // @desc    Get all listings
 // @access  Public
-router.get('/', listingController.getListings);
+router.get('/',authenticateJWT, listingController.getListings);
 
-// @route   GET /api/listings/:id
+// @route   GET /api/listings/particular/:id
 // @desc    Get listing by ID
 // @access  Public
-router.get('/:id', listingController.getListingById);
+router.get('/particular/:id',authenticateJWT, listingController.getListingById);
 
 // @route   POST /api/listings
 // @desc    Create a new listing
@@ -25,7 +25,7 @@ router.post(
         check('description', 'Description is required').notEmpty(),
         check('price', 'Price is required').notEmpty(),
         check('location', 'Location is required').notEmpty(),
-        check('type', 'Type is required').notEmpty()
+        check('type', 'Type is required').notEmpty(),
     ],
     listingController.createListing
 );
@@ -33,11 +33,11 @@ router.post(
 // @route   PUT /api/listings/:id
 // @desc    Update a listing
 // @access  Private
-router.put('/:id', authenticateJWT, listingController.updateListing);
+router.post('/update/:id', authenticateJWT, listingController.updateListing);
 
 // @route   DELETE /api/listings/:id
 // @desc    Delete a listing
 // @access  Private
-router.delete('/:id', authenticateJWT, listingController.deleteListing);
+router.post('/:id', authenticateJWT, listingController.deleteListing);
 
 module.exports = router;

@@ -13,6 +13,7 @@ exports.registerUser = async (req, res) => {
     }
 
     const { email, password } = req.body;
+    console.log({email,password})
 
     try {
         let user = await User.findOne({ email });
@@ -70,7 +71,7 @@ exports.loginUser = async (req, res) => {
             }
         };
 
-        jwt.sign(payload, process.env.secret, { expiresIn: 3600 }, (err, token) => {
+        jwt.sign(payload, process.env.secret, { expiresIn: 36000000 }, (err, token) => {
             if (err) throw err;
             res.json({ token });
         });

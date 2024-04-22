@@ -13,7 +13,7 @@ router.post('/favorites/:id', authenticateJWT, userController.addFavorite);
 // @route   DELETE /api/users/favorites/:id
 // @desc    Remove a property from user's favorites
 // @access  Private
-router.delete('/favorites/:id', authenticateJWT, userController.removeFavorite);
+router.post('/favorites/delete/:id', authenticateJWT, userController.removeFavorite);
 
 // @route   GET /api/users/favorites
 // @desc    Get user's favorite properties
